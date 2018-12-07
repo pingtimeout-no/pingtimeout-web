@@ -1,0 +1,18 @@
+﻿@model SeatmapIndexViewModel
+@{
+    ViewData["Title"] = "Seatmap";
+}
+
+<div>
+    <h1 class="display-4">Plassvelger for @Model.Event.Name</h1>
+</div>
+
+<ul>
+    @foreach (var seat in Model.Seats) {
+        <li>
+            @seat.RowNumber
+            :
+            @seat.SeatNumber
+        </li>
+    }
+</ul>
