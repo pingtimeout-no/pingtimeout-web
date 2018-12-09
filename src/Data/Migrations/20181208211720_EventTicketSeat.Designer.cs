@@ -9,7 +9,7 @@ using PingTimeout.Web.Data;
 namespace PingTimeout.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181206212423_EventTicketSeat")]
+    [Migration("20181208211720_EventTicketSeat")]
     partial class EventTicketSeat
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -233,7 +233,7 @@ namespace PingTimeout.Web.Data.Migrations
 
                     b.Property<string>("PickupCode");
 
-                    b.Property<string>("PurchaseDate");
+                    b.Property<DateTime>("PurchaseDate");
 
                     b.Property<string>("PurchaserEmail");
 
@@ -245,7 +245,7 @@ namespace PingTimeout.Web.Data.Migrations
 
                     b.Property<string>("TicketNumber");
 
-                    b.Property<DateTime>("UserBirthdate");
+                    b.Property<DateTime?>("UserBirthdate");
 
                     b.Property<string>("UserEmail");
 

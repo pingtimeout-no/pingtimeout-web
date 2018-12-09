@@ -7,6 +7,59 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+a {
+  color: #808080;
+  transition: ease-in-out color .15s, ease-in-out border-color .15s;
+  font-family: 'Roboto Mono', monospace;
+  font-weight: bold;
+}
+a:hover {
+  color: #f26122;
+  text-decoration: none;
+  border-bottom: 2px solid #f26122;
+}
+a.external::after {
+  content: "\f35d";
+  font: normal normal normal 14px/1 "Font Awesome 5 Free";
+  margin-left: 0.5rem;
+}
+.site-header {
+  background: #001a3e;
+}
+.site-header a {
+  font-size: 14px;
+  line-height: 50px;
+}
+.site-header a.active {
+  background: #f26122;
+  color: white;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+.site-header a:hover {
+  border-bottom: none;
+}
+
+h1, h2, h3, h4, h5, h6, a {
+  font-family: 'Roboto Mono', monospace;
+}
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+}
+h2 {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+h3 {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
@@ -53,4 +106,52 @@ body {
   /* Set the fixed height of the footer here */
   height: 60px;
   line-height: 60px; /* Vertically center the text there */
+}
+
+  footer span:before {
+      content: " | ";
+  }
+  footer span:first-child:before {
+      display: none;
+  }
+
+
+.seatmap {
+}
+.seatmap th {
+  width: 50px;
+  font-size: 10px;
+}
+.seatmap th:first-child {
+  text-align: left;
+}
+.seatmap th:last-child {
+  text-align: right;
+}
+.seatmap td {
+  text-align: center;
+  border: 1px solid black;
+  width: 40px;
+  font-size: 12px;
+}
+.seatmap tr.seatmap-row--spacer td {
+  border: none;
+  height: 20px;
+}
+
+.seatmap-seat.available {
+  background: lightgreen;
+  cursor: pointer;
+}
+.seatmap-seat.available:hover {
+  background: green;
+}
+.seatmap-seat.unavailable {
+  background: #c0c0c0;
+  color: #808080;
+  cursor: not-allowed;
+}
+.seatmap-seat.mine {
+  background: crimson;
+  color: white;
 }

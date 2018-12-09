@@ -7,12 +7,58 @@
     <h1 class="display-4">Plassvelger for @Model.Event.Name</h1>
 </div>
 
-<ul>
-    @foreach (var seat in Model.Seats) {
-        <li>
-            @seat.RowNumber
-            :
-            @seat.SeatNumber
-        </li>
+@if (Model.Ticket == null)
+{
+    <form class="form-inline mb-5" method="get" asp-controller="Seatmap" asp-action="Auth">
+        <div class="form-group">
+            <label for="token">Kode</label>
+            <input type="text" name="token" id="token" class="form-control mx-sm-3">
+        </div>
+
+        <button type="submit" class="btn btn-primary my-1">Logg inn</button>
+    </form>
+} else {
+
+    <input type="hidden" id="TicketId" value="@Model.Ticket.Id" />
+    <input type="hidden" id="SeatmapToken" value="@Model.Ticket.SeatMapToken" />
+
+    <p>Innlogget som @Model.Ticket.UserName (<a asp-area="" asp-controller="Seatmap" asp-action="Logout">Logg ut</a>)<br />
+        @if (@Model.Ticket.Seat == null) {
+            <span id="seatInfo">Plass ikke valgt</span>
+        } else {
+            <span id="seatInfo">Rad @Model.Ticket.Seat.RowNumber plass @Model.Ticket.Seat.SeatNumber</span>
+        }
+    </p>
+}
+
+<div id="messageArea"></div>
+
+<table class="seatmap">
+
+    @{
+        int counter = 0;
     }
-</ul>
+    @foreach (var row in Model.Rows) {
+        <tr class="seatmap-row seatmap-row--@row">
+            <th>Rad @row</th>
+            @foreach (var seat in Model.Seats.Where(s => s.RowNumber == row)) {
+                var availableClass = seat.Disabled ? " unavailable" : " available";
+                <td id="@seat.Id" class="seatmap-seat seatmap-seat--@(seat.SeatNumber) @availableClass" title="Rad @seat.RowNumber plass @seat.SeatNumber">@(seat.SeatNumber)</td>
+            }
+            <th>Rad @row</th>
+        </tr>
+        counter ++;
+        if (counter % 2 == 0) {
+            <tr class="seatmap-row--spacer"><td></td></tr>
+        }
+    }
+
+</table>
+
+<p>Antall plasser: @Model.Seats.Count()</p>
+
+
+@section Scripts {
+    <script src="~/lib/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/seatmap.js" asp-append-version="true"></script>
+}

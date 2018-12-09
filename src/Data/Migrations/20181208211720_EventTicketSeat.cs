@@ -51,14 +51,15 @@ namespace PingTimeout.Web.Data.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     EventId = table.Column<int>(nullable: true),
-                    TicketNumber = table.Column<string>(nullable: true),
+                    ImportDate = table.Column<DateTime>(nullable: false),
+                    TicketNumber = table.Column<int>(nullable: true),
                     PickupCode = table.Column<string>(nullable: true),
-                    PurchaseDate = table.Column<string>(nullable: true),
+                    PurchaseDate = table.Column<DateTime>(nullable: false),
                     PurchaserName = table.Column<string>(nullable: true),
                     PurchaserEmail = table.Column<string>(nullable: true),
                     UserName = table.Column<string>(nullable: true),
                     UserEmail = table.Column<string>(nullable: true),
-                    UserBirthdate = table.Column<DateTime>(nullable: false),
+                    UserBirthdate = table.Column<DateTime>(nullable: true),
                     SeatMapToken = table.Column<string>(nullable: true),
                     SeatId = table.Column<int>(nullable: true)
                 },

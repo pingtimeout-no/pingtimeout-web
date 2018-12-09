@@ -15,36 +15,32 @@
               crossorigin="anonymous"
               integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE="/>
     </environment>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/solid.css" integrity="sha384-rdyFrfAIC05c5ph7BKz3l5NG5yEottvO/DQ0dCrwD8gzeQDjYBHNr1ucUpQuljos" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css" integrity="sha384-u5J7JghGz0qUrmEsWzBQkfvc8nK3fUT7DCaQzNQ+q4oEXhGSx+P2OqjWsfIRB8QT" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto" rel="stylesheet">
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+        <nav class="site-header sticky-top">
+            <div class="container d-flex flex-column flex-md-row justify-content-between">
+                <a class="py-2" asp-area="" asp-controller="Home" asp-action="Index" title="Trykk for å komme til hovedsiden">
                     <img src="~/images/logo-orange-white.svg" style="height: 50px" alt="Ping Timeout med logo" />
                 </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <partial name="_LoginPartial" />
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+                <a class="py-2 d-none d-md-inline-block" href="/">Hjem</a>
+                <a class="py-2 d-none d-md-inline-block" asp-area="" asp-controller="Seatmap" asp-action="Index">Plassvelger</a>
+                <a class="py-2 d-none d-md-inline-block external" href="https://www.linticket.no/page/no/20/515/1800">Billetter</a>
+                <partial name="_LoginPartial" />
             </div>
         </nav>
     </header>
+
     <div class="container">
         <partial name="_CookieConsentPartial" />
-        <main role="main" class="pb-3">
+        <main role="main" class="mt-5">
             @RenderBody()
         </main>
     </div>
@@ -52,9 +48,6 @@
     <footer class="border-top footer text-muted">
         <div class="container">
             <span>Kopibeskyttet (C) 2018 Ping Timeout</span>
-            <span><a asp-area="" asp-controller="Home" asp-action="Privacy">Personvernerklæring</a></span>
-            <span><a asp-area="" asp-controller="Home" asp-action="Documents">Dokumenter</a></span>
-            <span><a asp-area="" asp-controller="Home" asp-action="Board">Styret</a></span>
         </div>
     </footer>
 

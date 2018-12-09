@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Ticket>
+@{
+    ViewData["Title"] = "Billetter";
+}
+
+<div>
+    <h1 class="display-4">Billetter</h1>
+</div>
+
+@if (Model.Any())
+{
+    <table>
+        <tr>
+            <th>Billettnummer</th>
+            <th>Bruker</th>
+            <th>E-post</th>
+            <th>Kjøpt</th>
+            <th>Hentekode</th>
+            <th>Token</th>
+        </tr>
+        @foreach (var ticket in Model) {
+            var authUrl = ViewData["BaseAuthUrl"] + ticket.SeatMapToken;
+            <tr>
+                <td>@(ticket.TicketNumber)</td>
+                <td>@(ticket.UserName)</td>
+                <td>@(ticket.UserEmail)</td>
+                <td>@(ticket.PurchaseDate)</td>
+                <td>@(ticket.PickupCode)</td>
+                <td><a href="@authUrl">@(ticket.SeatMapToken)</a></td>
+            </tr>
+        }
+    </table>
+
+} else {
+    <p>Ingen billetter registrert for aktivt arrangement.</p>
+}

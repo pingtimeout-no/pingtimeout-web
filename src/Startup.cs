@@ -13,6 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using PingTimeout.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PingTimeout.Web.Hubs;
+using PingTimeout.Web.Models;
 
 namespace PingTimeout.Web
 {
@@ -20,7 +22,7 @@ namespace PingTimeout.Web
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            Configuration = configuration;  
         }
 
         public IConfiguration Configuration { get; }
@@ -35,14 +37,33 @@ namespace PingTimeout.Web
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.Configure<PingTimeoutConfig>(Configuration.GetSection("PingTimeout"));
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddDefaultUI(UIFramework.Bootstrap4)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = false;
+            })
+            .AddDefaultUI(UIFramework.Bootstrap4)
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders(); 
+            
+            services.AddScoped<UserManager<IdentityUser>, UserManager<IdentityUser>>();
+            services.AddScoped<RoleManager<IdentityRole>, RoleManager<IdentityRole>>();
+
+            services.AddDistributedMemoryCache();
+
+                services.AddSession(options =>
+                {
+                    // Set a short timeout for easy testing.
+                    options.IdleTimeout = TimeSpan.FromHours(1);
+                    options.Cookie.HttpOnly = true;
+                });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +84,7 @@ namespace PingTimeout.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseSession();
 
             app.UseAuthentication();
 
@@ -71,6 +93,11 @@ namespace PingTimeout.Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<SeatmapHub>("/seatmaphub");
             });
         }
     }

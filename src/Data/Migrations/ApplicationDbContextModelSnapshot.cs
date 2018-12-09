@@ -231,7 +231,7 @@ namespace PingTimeout.Web.Data.Migrations
 
                     b.Property<string>("PickupCode");
 
-                    b.Property<string>("PurchaseDate");
+                    b.Property<DateTime>("PurchaseDate");
 
                     b.Property<string>("PurchaserEmail");
 
@@ -243,7 +243,7 @@ namespace PingTimeout.Web.Data.Migrations
 
                     b.Property<string>("TicketNumber");
 
-                    b.Property<DateTime>("UserBirthdate");
+                    b.Property<DateTime?>("UserBirthdate");
 
                     b.Property<string>("UserEmail");
 

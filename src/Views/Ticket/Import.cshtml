@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Importer billetter";
+}
+
+<div>
+    <h1 class="display-4">Importer billetter</h1>
+</div>
+
+<form method="post" enctype="multipart/form-data" asp-controller="Ticket" asp-action="UploadFile">
+    <div class="form-group">
+        <div class="col-md-10">
+            <p>Last opp billetter eksportert fra Linticket:</p>
+            <input type="file" name="files" multiple />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="submit" value="Importer" />
+        </div>
+    </div>
+</form>
