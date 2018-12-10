@@ -40,7 +40,7 @@ namespace PingTimeout.Web.Controllers
             var activeEvent = context.Events.FirstOrDefault();
 
             if (activeEvent == null)
-                return NotFound();
+                return NotFound();  
 
             var tickets = context.Tickets.Include(t => t.Seat).Where(t => t.Event.Id == activeEvent.Id).OrderBy(t => t.PurchaseDate); 
 
