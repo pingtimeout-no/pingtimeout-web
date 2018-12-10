@@ -13,6 +13,7 @@ using Pingtimeout.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PingTimeout.Web.Data;
+using PingTimeout.Web.Hubs;
 using PingTimeout.Web.Models;
 
 namespace Pingtimeout.Web
@@ -50,8 +51,9 @@ namespace Pingtimeout.Web
                 options.Cookie.HttpOnly = true;
             });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -79,6 +81,11 @@ namespace Pingtimeout.Web
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<SeatmapHub>("/seatmaphub");
             });
         }
     }

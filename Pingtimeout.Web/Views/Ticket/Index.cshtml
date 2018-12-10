@@ -15,8 +15,8 @@
             <th>Bruker</th>
             <th>E-post</th>
             <th>Kjøpt</th>
-            <th>Hentekode</th>
-            <th>Token</th>
+            <th>Plass</th>
+            <th>Mail sendt</th>
         </tr>
         @foreach (var ticket in Model) {
             var authUrl = ViewData["BaseAuthUrl"] + ticket.SeatMapToken;
@@ -25,8 +25,15 @@
                 <td>@(ticket.UserName)</td>
                 <td>@(ticket.UserEmail)</td>
                 <td>@(ticket.PurchaseDate)</td>
-                <td>@(ticket.PickupCode)</td>
-                <td><a href="@authUrl">@(ticket.SeatMapToken)</a></td>
+                <td>
+                    @if (ticket.Seat != null)
+                    {
+                        <text>
+                        Rad @ticket.Seat.RowNumber plass @ticket.Seat.SeatNumber
+                        </text>
+                    }
+                </td>
+                <td>@ticket.SeatMapMailSent</td>
             </tr>
         }
     </table>
