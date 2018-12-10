@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
@@ -41,7 +42,7 @@ namespace PingTimeout.Web.Controllers
             if (activeEvent == null)
                 return NotFound();
 
-            var tickets = context.Tickets.Where(t => t.Event.Id == activeEvent.Id).OrderBy(t => t.PurchaseDate); 
+            var tickets = context.Tickets.Include(t => t.Seat).Where(t => t.Event.Id == activeEvent.Id).OrderBy(t => t.PurchaseDate); 
 
             ViewData["BaseAuthUrl"] = config.Value.BaseUrl + "seatmap/auth?token=";
             
