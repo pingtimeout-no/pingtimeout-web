@@ -20,6 +20,7 @@ namespace PingTimeout.Web.Models
         public DateTime? UserBirthdate { get; set; }
 
         public string SeatMapToken { get; set; }
+        public DateTime? SeatMapMailSent { get; set; }
         public virtual Seat Seat { get; set; }
     }
 }
