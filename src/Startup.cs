@@ -4,15 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using PingTimeout.Web.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PingTimeout.Web.Data;
 using PingTimeout.Web.Hubs;
 using PingTimeout.Web.Models;
 
@@ -46,7 +45,6 @@ namespace PingTimeout.Web
             {
                 options.User.RequireUniqueEmail = false;
             })
-            .AddDefaultUI(UIFramework.Bootstrap4)
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders(); 
             
@@ -62,7 +60,7 @@ namespace PingTimeout.Web
                     options.Cookie.HttpOnly = true;
                 });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSignalR();
         }
 
