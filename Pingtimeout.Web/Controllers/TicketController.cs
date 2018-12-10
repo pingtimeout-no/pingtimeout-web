@@ -68,29 +68,46 @@ namespace PingTimeout.Web.Controllers
             var apiKey = config.Value.SendGridApiKey;
             var client = new SendGridClient(apiKey);
 
-            var tickets = context.Tickets.Where(t => t.Event.Id == activeEvent.Id);
+            var tickets = context.Tickets.Where(t => t.Event.Id == activeEvent.Id && t.SeatMapMailSent == null);
             foreach (var ticket in tickets)
             {
-                var name = ticket.UserName;
-                var email = ticket.UserEmail;
-                var ccEmail = ticket.UserEmail != ticket.PurchaserEmail ? ticket.PurchaserEmail : "";
-                var ticketNumber = ticket.TicketNumber;
+                try
+                {
+                    var name = ticket.UserName;
+                    var email = ticket.UserEmail;
+                    var ccEmail = ticket.UserEmail != ticket.PurchaserEmail ? ticket.PurchaserEmail : "";
+                    var ticketNumber = ticket.TicketNumber;
 
-                var url = config.Value.BaseUrl + "seatmap/auth?token=" + ticket.SeatMapToken;
+                    var url = config.Value.BaseUrl + "seatmap/auth?token=" + ticket.SeatMapToken;
 
-                var from = new EmailAddress("post@pingtimeout.no", "Ping Timeout");
-                var subject = "Nå kan du velge plass på RomjulsLAN 2018";
-                var to = new EmailAddress("thomas@tkalve.no", name);
-                var plainTextContent = $"Hei {name}!\r\n\r\nNå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018. Trykk her for å velge plass: {url}\r\n\r\nHilsen Ping Timeout";
-                var htmlContent = $"Hei {name}!<br /><br />Nå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018.<br /><br /><a href=\"{url}\">Trykk her for å velge plass</a>.<br /><br />Hilsen Ping Timeout";
-                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                //if (!string.IsNullOrWhiteSpace(ccEmail)) { 
-                //    msg.AddCc(new EmailAddress(ccEmail));
-                //}
-                var response = await client.SendEmailAsync(msg);
+                    var from = new EmailAddress("post@pingtimeout.no", "Ping Timeout");
+                    var subject = "Nå kan du velge plass på RomjulsLAN 2018";
+                    var to = new EmailAddress(email, name);
+                    var plainTextContent =
+                        $"Hei {name}!\r\n\r\nNå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018. Trykk her for å velge plass: {url}\r\n\r\nHilsen Ping Timeout";
+                    var htmlContent =
+                        $"Hei {name}!<br /><br />Nå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018.<br /><br /><a href=\"{url}\">Trykk her for å velge plass</a>.<br /><br />Hilsen Ping Timeout";
+                    var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+                    if (!string.IsNullOrWhiteSpace(ccEmail))
+                    {
+                        msg.AddCc(new EmailAddress(ccEmail));
+                    }
+
+                    msg.AddBcc("thomas@tkalve.no");
+
+                    var response = await client.SendEmailAsync(msg);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                ticket.SeatMapMailSent = DateTime.Now;
 
                 i++;
             }
+
+            await context.SaveChangesAsync();
 
             return Ok("Sendt til " + i + " stykk");
 
