@@ -7,8 +7,8 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/seatmaphub").build
 
 connection.on("ClaimedSeat", function (ticket, seat, alert) {
 
-    if (ticket == ticketId) {
-        $("#" + seat).addClass("mine").removeClass("unavailable").removeClass("available");
+    if (ticket === ticketId) {
+        $("#" + seat).addClass("mine").removeClass("taken").removeClass("available");
         $("#seatInfo").html($("#" + seat).attr("title"));
 
         if (alert) {
@@ -20,12 +20,12 @@ connection.on("ClaimedSeat", function (ticket, seat, alert) {
         }
     
     } else {
-        $("#" + seat).addClass("unavailable").removeClass("available");
+        $("#" + seat).addClass("taken").removeClass("available");
     }
 });
 
 connection.on("ReleasedSeat", function (seat) {
-    $("#" + seat).addClass("available").removeClass("unavailable").removeClass("mine");
+    $("#" + seat).addClass("available").removeClass("taken").removeClass("mine");
 });
 
 connection.on("ClaimFailed", function (seat, message) {
@@ -37,7 +37,7 @@ connection.on("ClaimFailed", function (seat, message) {
 if (ticketId != "" && token != "") {
     $(".seatmap-seat").click(function(e) {
 
-        if ($(this).hasClass("available") && typeof ticketId != "undefined"){
+        if ($(this).hasClass("available") && typeof ticketId !== "undefined"){
             var seatId = $(this).attr("id");
 
             connection.invoke("ClaimSeat", ticketId, token, seatId).catch(function (err) {

@@ -139,19 +139,36 @@ body {
   height: 20px;
 }
 
-.seatmap-seat.available {
+.seatmap-seat.unavailable,
+.legend-unavailable {
+    background: #c0c0c0;
+    color: #808080;
+    cursor: not-allowed;
+}
+.seatmap-seat.available,
+.legend-available {
   background: lightgreen;
   cursor: pointer;
 }
 .seatmap-seat.available:hover {
   background: green;
 }
-.seatmap-seat.unavailable {
-  background: #c0c0c0;
-  color: #808080;
-  cursor: not-allowed;
+.seatmap-seat.taken,
+.legend-taken{
+    background: #808080;
+    color: black;
 }
-.seatmap-seat.mine {
+.seatmap-seat.mine,
+.legend-mine{
   background: crimson;
   color: white;
+}
+
+.legend {
+    margin-bottom: 10px;
+}
+.legend td {
+    font-size: 10px;
+    border: 1px solid black;
+    padding: 5px 10px;
 }

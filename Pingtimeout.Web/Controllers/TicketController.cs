@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -76,7 +77,6 @@ namespace PingTimeout.Web.Controllers
                 {
                     var name = ticket.UserName;
                     var email = ticket.UserEmail;
-                    var ccEmail = ticket.UserEmail != ticket.PurchaserEmail ? ticket.PurchaserEmail : "";
                     var ticketNumber = ticket.TicketNumber;
 
                     var url = config.Value.BaseUrl + "seatmap/auth?token=" + ticket.SeatMapToken;
@@ -85,27 +85,30 @@ namespace PingTimeout.Web.Controllers
                     var subject = "Nå kan du velge plass på RomjulsLAN 2018";
                     var to = new EmailAddress(email, name);
                     var plainTextContent =
-                        $"Hei {name}!\r\n\r\nNå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018. Trykk her for å velge plass: {url}\r\n\r\nHilsen Ping Timeout";
+                        $"Hei {name}!\r\n\r\nNå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018. Trykk her for å velge plass: {url}\r\nKoden din er {ticket.SeatMapToken}\r\n\r\nHilsen Ping Timeout";
                     var htmlContent =
-                        $"Hei {name}!<br /><br />Nå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018.<br /><br /><a href=\"{url}\">Trykk her for å velge plass</a>.<br /><br />Hilsen Ping Timeout";
+                        $"Hei {name}!<br /><br />Nå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018.<br /><br /><a href=\"{url}\">Trykk her for å velge plass</a>.<br /><br />Koden din er <strong>{ticket.SeatMapToken}</strong><br /><br />Hilsen Ping Timeout";
                     var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                    if (!string.IsNullOrWhiteSpace(ccEmail))
-                    {
-                        msg.AddCc(new EmailAddress(ccEmail));
-                    }
 
-                    msg.AddBcc("thomas@tkalve.no");
+                    if (ticket.UserEmail.ToLower().Trim() != ticket.PurchaserEmail.ToLower().Trim())
+                        msg.AddCc(new EmailAddress(ticket.PurchaserEmail));
 
                     var response = await client.SendEmailAsync(msg);
+                    if (response.StatusCode == HttpStatusCode.Accepted)
+                    {
+                        ticket.SeatMapMailSent = DateTime.Now;
+                        i++;
+                    }
+                    else
+                    {
+                        Debug.WriteLine(response.StatusCode);
+                        Debug.WriteLine(response.Body.ReadAsStringAsync().Result);
+                    }
                 }
                 catch (Exception ex)
                 {
-
+                    Debug.WriteLine("Error sending email: " + ex.Message);
                 }
-
-                ticket.SeatMapMailSent = DateTime.Now;
-
-                i++;
             }
 
             await context.SaveChangesAsync();
