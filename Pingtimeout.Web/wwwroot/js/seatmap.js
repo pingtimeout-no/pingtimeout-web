@@ -1,4 +1,4 @@
-"use strict";
+    "use strict";
 
 var ticketId = $("#TicketId").val();
 var token = $("#SeatmapToken").val();
@@ -7,7 +7,7 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/seatmaphub").build
 
 connection.on("ClaimedSeat", function (ticket, seat, alert) {
 
-    if (ticket === ticketId) {
+    if (ticket == ticketId) {
         $("#" + seat).addClass("mine").removeClass("taken").removeClass("available");
         $("#seatInfo").html($("#" + seat).attr("title"));
 
