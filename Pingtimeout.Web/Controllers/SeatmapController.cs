@@ -111,7 +111,7 @@ namespace PingTimeout.Web.Controllers
                 var ticket = _context.Tickets.FirstOrDefault(t => t.Seat.Id == seat.Id);
                 if (!string.IsNullOrWhiteSpace(seat.ReservationOverride))
                     text = $"{seat.ReservationOverride}";
-                if (ticket != null)
+                else if (ticket != null)
                     text = $"{ticket.UserName}";
                 else if (seat.Disabled)
                     text = $"Reservert for CREW";
