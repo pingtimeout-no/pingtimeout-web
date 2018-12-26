@@ -105,11 +105,12 @@ namespace PingTimeout.Web.Controllers
                 XFont font = new XFont("Courier New", 48, XFontStyle.Regular);
                 gfx.DrawString($"Rad {seat.RowNumber} | Sete {seat.SeatNumber}", boldfont, XBrushes.Black, new XRect(0, 0, page.Width, page.Height / 2), XStringFormats.BottomCenter);
 
-
                 var bottomRect = new XRect(50, page.Height / 2, page.Width-100, page.Height / 2);
 
                 string text = "(ikke reservert)";
                 var ticket = _context.Tickets.FirstOrDefault(t => t.Seat.Id == seat.Id);
+                if (!string.IsNullOrWhiteSpace(seat.ReservationOverride))
+                    text = $"{seat.ReservationOverride}";
                 if (ticket != null)
                     text = $"{ticket.UserName}";
                 else if (seat.Disabled)

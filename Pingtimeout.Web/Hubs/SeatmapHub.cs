@@ -22,6 +22,11 @@ namespace PingTimeout.Web.Hubs {
             foreach (var ticket in ticketsWithSeats) {
                 await Clients.Caller.SendAsync("ClaimedSeat", ticket.Id, ticket.Seat.Id, false);
             }
+            var speciallyReservedSeats = _context.Seats.Where(s => !string.IsNullOrWhiteSpace(s.ReservationOverride));
+            foreach (var seat in speciallyReservedSeats)
+            {
+                await Clients.Caller.SendAsync("ClaimedSeat", 999, seat.Id, false);
+            }
             await base.OnConnectedAsync();
         }
 

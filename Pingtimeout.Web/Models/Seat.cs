@@ -10,5 +10,6 @@ namespace PingTimeout.Web.Models
         public int RowNumber { get; set; }
         public int SeatNumber { get; set; }
         public bool Disabled { get; set; }
+        public string ReservationOverride { get; set; }
     }
 }
