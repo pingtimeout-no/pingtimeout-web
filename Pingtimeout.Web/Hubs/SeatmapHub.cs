@@ -33,38 +33,39 @@ namespace PingTimeout.Web.Hubs {
         public async Task ClaimSeat(int ticketId, string token, int seatId)
         {
             var ticket = _context.Tickets.Include(t => t.Seat).Where(t => t.Id == ticketId).FirstOrDefault();
-            var previousSeat = ticket.Seat;
+            //var previousSeat = ticket.Seat;
 
             var seat = _context.Seats.Where(s => s.Id == seatId).FirstOrDefault();
+            await Clients.Caller.SendAsync("ClaimFailed", seat.Id, "Plassreservering er nå stengt");
 
-            if (ticket == null || seat == null)
-            {
-                // Ticket or seat not found
-                await Clients.Caller.SendAsync("ClaimFailed", seat.Id, "Ukjent billett eller plass");
-                return;
-            }
+            //if (ticket == null || seat == null)
+            //{
+            //    // Ticket or seat not found
+            //    await Clients.Caller.SendAsync("ClaimFailed", seat.Id, "Ukjent billett eller plass");
+            //    return;
+            //}
 
-            if (ticket.SeatMapToken != token)
-            {
-                // Token is invalid
-                await Clients.Caller.SendAsync("ClaimFailed", seatId, "Du har ikke tilgang til denne billetten");
-                return;
-            }
+            //if (ticket.SeatMapToken != token)
+            //{
+            //    // Token is invalid
+            //    await Clients.Caller.SendAsync("ClaimFailed", seatId, "Du har ikke tilgang til denne billetten");
+            //    return;
+            //}
 
-            if (_context.Tickets.Any(t => t.Seat.Id == seat.Id && t.Id != ticket.Id)) {
-                // Claimed by someone else
-                await Clients.Caller.SendAsync("ClaimFailed", seat.Id, "Plassen er opptatt");
-                return;
-            }
+            //if (_context.Tickets.Any(t => t.Seat.Id == seat.Id && t.Id != ticket.Id)) {
+            //    // Claimed by someone else
+            //    await Clients.Caller.SendAsync("ClaimFailed", seat.Id, "Plassen er opptatt");
+            //    return;
+            //}
 
-            // Release previous seat
-            if (previousSeat != null)
-                await Clients.All.SendAsync("ReleasedSeat", previousSeat.Id);
+            //// Release previous seat
+            //if (previousSeat != null)
+            //    await Clients.All.SendAsync("ReleasedSeat", previousSeat.Id);
 
-            // Save seat claim, notify everyone
-            ticket.Seat = seat;
-            await _context.SaveChangesAsync();
-            await Clients.All.SendAsync("ClaimedSeat", ticket.Id, seat.Id, true);
+            //// Save seat claim, notify everyone
+            //ticket.Seat = seat;
+            //await _context.SaveChangesAsync();
+            //await Clients.All.SendAsync("ClaimedSeat", ticket.Id, seat.Id, true);
         }
     }
 }

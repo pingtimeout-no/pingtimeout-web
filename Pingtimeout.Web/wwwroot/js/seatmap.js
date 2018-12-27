@@ -34,20 +34,20 @@ connection.on("ClaimFailed", function (seat, message) {
     )
 })
 
-if (ticketId != "" && token != "") {
-    $(".seatmap-seat").click(function(e) {
+//if (ticketId != "" && token != "") {
+//    $(".seatmap-seat").click(function(e) {
 
-        if ($(this).hasClass("available") && typeof ticketId !== "undefined"){
-            var seatId = $(this).attr("id");
+//        if ($(this).hasClass("available") && typeof ticketId !== "undefined"){
+//            var seatId = $(this).attr("id");
 
-            connection.invoke("ClaimSeat", ticketId, token, seatId).catch(function (err) {
-                return console.error(err.toString());
-            });
-        }
+//            connection.invoke("ClaimSeat", ticketId, token, seatId).catch(function (err) {
+//                return console.error(err.toString());
+//            });
+//        }
 
-        event.preventDefault();
-    });
-}
+//        event.preventDefault();
+//    });
+//}
 
 connection.start().catch(function (err) {
     return console.error(err.toString());

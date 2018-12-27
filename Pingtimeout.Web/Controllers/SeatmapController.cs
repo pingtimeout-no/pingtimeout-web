@@ -53,38 +53,6 @@ namespace PingTimeout.Web.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult Generate()
-        {
-            var activeEvent = _context.Events.FirstOrDefault();
-
-            if (activeEvent == null)
-                return NotFound();
-
-            var disabled = false;
-            for (int row = 1; row < 11; row++) {
-                disabled = false;
-                if (row > 6)
-                    disabled = true;
-
-                for (int seat = 1; seat < 21; seat++) {
-                    
-                    if (!_context.Seats.Any(s => s.Event.Id == activeEvent.Id && s.RowNumber == row && s.SeatNumber == seat))
-                    {
-                        _context.Seats.Add(new Seat() {
-                            Event = activeEvent,
-                            RowNumber = row,
-                            SeatNumber = seat,
-                            Disabled = ((row == 1 || row == 2) && seat < 11) ? true : disabled
-                        });
-                    }
-                }
-            }
-            _context.SaveChanges();
-
-            return RedirectToAction("Index");
-        }
-
-        [Authorize(Roles = "Admin")]
         public IActionResult Print(int eventId)
         {
             var tmpFile = Path.GetTempFileName();
@@ -93,7 +61,22 @@ namespace PingTimeout.Web.Controllers
 
             PdfDocument document = new PdfDocument();
             document.Info.Title = $"Seatmap {activeEvent.Name}";
+
             var seats = _context.Seats.OrderBy(m => m.RowNumber).ThenBy(m => m.SeatNumber);
+            var rows = seats.DistinctBy(s => s.RowNumber).OrderBy(s => s.RowNumber).Select(s => s.RowNumber);
+            
+            for (int i = 0; i < 2; i++) { 
+                foreach (var row in rows)
+                {
+                    PdfPage page = document.AddPage();
+                    page.Size = PdfSharp.PageSize.A4;
+                    page.Orientation = PdfSharp.PageOrientation.Landscape;
+                    XGraphics gfx = XGraphics.FromPdfPage(page);
+                    XFont boldfont = new XFont("Courier New", 200, XFontStyle.Bold);
+                    gfx.DrawString($"Rad {row}", boldfont, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.Center);
+                }
+            }
+
             foreach (var seat in seats)
             {
                 PdfPage page = document.AddPage();
