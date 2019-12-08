@@ -27,7 +27,7 @@ namespace PingTimeout.Web.Controllers
 
         private readonly IOptions<PingTimeoutConfig> config;
         private ApplicationDbContext context;
- 
+
         public TicketController(ApplicationDbContext context, IOptions<PingTimeoutConfig> config)
         {
             this.context = context;
@@ -41,12 +41,12 @@ namespace PingTimeout.Web.Controllers
             var activeEvent = context.Events.FirstOrDefault();
 
             if (activeEvent == null)
-                return NotFound();  
+                return NotFound();
 
-            var tickets = context.Tickets.Include(t => t.Seat).Where(t => t.Event.Id == activeEvent.Id).OrderBy(t => t.PurchaseDate); 
+            var tickets = context.Tickets.Include(t => t.Seat).Where(t => t.Event.Id == activeEvent.Id).OrderBy(t => t.PurchaseDate);
 
             ViewData["BaseAuthUrl"] = config.Value.BaseUrl + "seatmap/auth?token=";
-            
+
             return View(tickets);
         }
 
@@ -57,7 +57,8 @@ namespace PingTimeout.Web.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> SendTokens() {
+        public async Task<IActionResult> SendTokens()
+        {
 
             int i = 0;
 
@@ -82,12 +83,12 @@ namespace PingTimeout.Web.Controllers
                     var url = config.Value.BaseUrl + "seatmap/auth?token=" + ticket.SeatMapToken;
 
                     var from = new EmailAddress("post@pingtimeout.no", "Ping Timeout");
-                    var subject = "Nå kan du velge plass på RomjulsLAN 2018";
+                    var subject = "Nå kan du velge plass på RomjulsLAN 2019";
                     var to = new EmailAddress(email, name);
                     var plainTextContent =
-                        $"Hei {name}!\r\n\r\nNå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018. Trykk her for å velge plass: {url}\r\nKoden din er {ticket.SeatMapToken}\r\n\r\nHilsen Ping Timeout";
+                        $"Hei {name}!\r\n\r\nNå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2019. Trykk her for å velge plass: {url}\r\nKoden din er {ticket.SeatMapToken}\r\n\r\nHilsen Ping Timeout";
                     var htmlContent =
-                        $"Hei {name}!<br /><br />Nå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2018.<br /><br /><a href=\"{url}\">Trykk her for å velge plass</a>.<br /><br />Koden din er <strong>{ticket.SeatMapToken}</strong><br /><br />Hilsen Ping Timeout";
+                        $"Hei {name}!<br /><br />Nå kan du velge plass for billettnummer {ticketNumber} på Ping Timeout RomjulsLAN 2019.<br /><br /><a href=\"{url}\">Trykk her for å velge plass</a>.<br /><br />Koden din er <strong>{ticket.SeatMapToken}</strong><br /><br />Hilsen Ping Timeout";
                     var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
 
                     if (ticket.UserEmail.ToLower().Trim() != ticket.PurchaserEmail.ToLower().Trim())
@@ -156,7 +157,7 @@ namespace PingTimeout.Web.Controllers
                         IRow row = sheet.GetRow(i);
                         if (row == null) continue;
                         if (row.Cells.All(d => d.CellType == CellType.Blank)) break;
-                        
+
                         try
                         {
                             var ticketNumber = int.Parse(row.GetCell(12)?.ToString());
@@ -174,19 +175,25 @@ namespace PingTimeout.Web.Controllers
 
                                     // Handle bad dates
                                     DateTime? userBirthdate;
-                                    if (userBirthdateString.Length == 6) {
+                                    if (userBirthdateString.Length == 6)
+                                    {
                                         var provider = CultureInfo.InvariantCulture;
-                                        userBirthdate = new DateTime(Int16.Parse("20"+userBirthdateString.Substring(4, 2)), Int16.Parse(userBirthdateString.Substring(2, 2)), Int16.Parse(userBirthdateString.Substring(0, 2)));
+                                        userBirthdate = new DateTime(Int16.Parse("20" + userBirthdateString.Substring(4, 2)), Int16.Parse(userBirthdateString.Substring(2, 2)), Int16.Parse(userBirthdateString.Substring(0, 2)));
                                         userBirthdate = DateTime.ParseExact(userBirthdateString, "mmDDyy", provider);
-                                    } else if (string.IsNullOrWhiteSpace(userBirthdateString)) {
+                                    }
+                                    else if (string.IsNullOrWhiteSpace(userBirthdateString))
+                                    {
                                         userBirthdate = null;
-                                    } else {
+                                    }
+                                    else
+                                    {
                                         userBirthdate = DateTime.Parse(userBirthdateString);
                                     }
 
                                     var token = string.Empty;
                                     while (string.IsNullOrWhiteSpace(token) ||
-                                           context.Tickets.Any(t => t.SeatMapToken == token)) {
+                                           context.Tickets.Any(t => t.SeatMapToken == token))
+                                    {
                                         token = TokenHelper.RandomString(6);
                                     }
 
@@ -201,13 +208,15 @@ namespace PingTimeout.Web.Controllers
                                         PurchaseDate = purchaseDate,
                                         UserName = userName,
                                         UserEmail = userEmail,
-                                        UserBirthdate =  userBirthdate,
+                                        UserBirthdate = userBirthdate,
                                         SeatMapToken = token
                                     };
                                     context.Tickets.Add(ticket);
                                 }
                             }
-                        } catch (Exception ex) {
+                        }
+                        catch (Exception ex)
+                        {
                             Debug.WriteLine(ex.Message);
                         }
                     }
