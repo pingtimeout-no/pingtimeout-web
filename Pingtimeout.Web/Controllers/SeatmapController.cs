@@ -55,7 +55,7 @@ namespace PingTimeout.Web.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Generate()
         {
-            var activeEvent = _context.Events.FirstOrDefault();
+            var activeEvent = _context.Events.OrderByDescending(e => e.StartDate).FirstOrDefault();
 
             if (activeEvent == null)
                 return NotFound();
@@ -92,7 +92,7 @@ namespace PingTimeout.Web.Controllers
         {
             var tmpFile = Path.GetTempFileName();
 
-            var activeEvent = eventId > 0 ? _context.Events.Find(eventId) : _context.Events.FirstOrDefault();
+            var activeEvent = eventId > 0 ? _context.Events.Find(eventId) : _context.Events.OrderByDescending(e => e.StartDate).FirstOrDefault();
 
             PdfDocument document = new PdfDocument();
             document.Info.Title = $"Seatmap {activeEvent.Name}";

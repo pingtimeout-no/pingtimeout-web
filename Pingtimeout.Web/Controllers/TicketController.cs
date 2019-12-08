@@ -38,7 +38,7 @@ namespace PingTimeout.Web.Controllers
         public IActionResult Index()
         {
             var model = new SeatmapIndexViewModel();
-            var activeEvent = context.Events.FirstOrDefault();
+            var activeEvent = context.Events.OrderByDescending(e => e.StartDate).FirstOrDefault();
 
             if (activeEvent == null)
                 return NotFound();
@@ -62,7 +62,7 @@ namespace PingTimeout.Web.Controllers
 
             int i = 0;
 
-            var activeEvent = context.Events.FirstOrDefault();
+            var activeEvent = context.Events.OrderByDescending(e => e.StartDate).FirstOrDefault();
 
             if (activeEvent == null)
                 return NotFound();
@@ -123,7 +123,7 @@ namespace PingTimeout.Web.Controllers
         [HttpPost("UploadFile")]
         public IActionResult UploadFile()
         {
-            var activeEvent = context.Events.FirstOrDefault();
+            var activeEvent = context.Events.OrderByDescending(e => e.StartDate).FirstOrDefault();
 
             if (activeEvent == null)
                 return NotFound();
