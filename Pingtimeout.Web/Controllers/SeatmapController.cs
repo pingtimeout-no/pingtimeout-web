@@ -19,7 +19,7 @@ namespace PingTimeout.Web.Controllers
     public class SeatmapController : Controller
     {
         private ApplicationDbContext _context;
- 
+
         public SeatmapController(ApplicationDbContext context)
         {
             _context = context;
@@ -28,7 +28,7 @@ namespace PingTimeout.Web.Controllers
         public IActionResult Index()
         {
             var model = new SeatmapIndexViewModel();
-            var activeEvent = _context.Events.FirstOrDefault();
+            var activeEvent = _context.Events.OrderByDescending(e => e.StartDate).FirstOrDefault();
 
             if (activeEvent == null)
                 return NotFound();
@@ -47,8 +47,8 @@ namespace PingTimeout.Web.Controllers
                 var ticket = _context.Tickets.Include(t => t.Seat).Where(t => t.Id == ticketId && t.Event.Id == activeEvent.Id && t.SeatMapToken == token).FirstOrDefault();
                 if (ticket != null)
                     model.Ticket = ticket;
-            }   
-                        
+            }
+
             return View(model);
         }
 
@@ -61,16 +61,19 @@ namespace PingTimeout.Web.Controllers
                 return NotFound();
 
             var disabled = false;
-            for (int row = 1; row < 11; row++) {
+            for (int row = 1; row < 11; row++)
+            {
                 disabled = false;
                 if (row > 6)
                     disabled = true;
 
-                for (int seat = 1; seat < 21; seat++) {
-                    
+                for (int seat = 1; seat < 21; seat++)
+                {
+
                     if (!_context.Seats.Any(s => s.Event.Id == activeEvent.Id && s.RowNumber == row && s.SeatNumber == seat))
                     {
-                        _context.Seats.Add(new Seat() {
+                        _context.Seats.Add(new Seat()
+                        {
                             Event = activeEvent,
                             RowNumber = row,
                             SeatNumber = seat,
@@ -94,6 +97,21 @@ namespace PingTimeout.Web.Controllers
             PdfDocument document = new PdfDocument();
             document.Info.Title = $"Seatmap {activeEvent.Name}";
             var seats = _context.Seats.OrderBy(m => m.RowNumber).ThenBy(m => m.SeatNumber);
+            var rows = seats.DistinctBy(s => s.RowNumber).OrderBy(s => s.RowNumber).Select(s => s.RowNumber);
+
+            for (int i = 0; i < 2; i++)
+            {
+                foreach (var row in rows)
+                {
+                    PdfPage page = document.AddPage();
+                    page.Size = PdfSharp.PageSize.A4;
+                    page.Orientation = PdfSharp.PageOrientation.Landscape;
+                    XGraphics gfx = XGraphics.FromPdfPage(page);
+                    XFont boldfont = new XFont("Courier New", 200, XFontStyle.Bold);
+                    gfx.DrawString($"Rad {row}", boldfont, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.Center);
+                }
+            }
+
             foreach (var seat in seats)
             {
                 PdfPage page = document.AddPage();
@@ -105,7 +123,7 @@ namespace PingTimeout.Web.Controllers
                 XFont font = new XFont("Courier New", 48, XFontStyle.Regular);
                 gfx.DrawString($"Rad {seat.RowNumber} | Sete {seat.SeatNumber}", boldfont, XBrushes.Black, new XRect(0, 0, page.Width, page.Height / 2), XStringFormats.BottomCenter);
 
-                var bottomRect = new XRect(50, page.Height / 2, page.Width-100, page.Height / 2);
+                var bottomRect = new XRect(50, page.Height / 2, page.Width - 100, page.Height / 2);
 
                 string text = "(ikke reservert)";
                 var ticket = _context.Tickets.FirstOrDefault(t => t.Seat.Id == seat.Id);
@@ -146,7 +164,8 @@ namespace PingTimeout.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult Logout() {
+        public IActionResult Logout()
+        {
             HttpContext.Session.Clear();
             return RedirectToAction("Index");
         }
