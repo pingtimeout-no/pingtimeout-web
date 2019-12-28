@@ -107,7 +107,7 @@ namespace PingTimeout.Web.Controllers
                     page.Size = PdfSharp.PageSize.A4;
                     page.Orientation = PdfSharp.PageOrientation.Landscape;
                     XGraphics gfx = XGraphics.FromPdfPage(page);
-                    XFont boldfont = new XFont("Courier New", 200, XFontStyle.Bold);
+                    XFont boldfont = new XFont("Courier", 200, XFontStyle.Bold);
                     gfx.DrawString($"Rad {row}", boldfont, XBrushes.Black, new XRect(0, 0, page.Width, page.Height), XStringFormats.Center);
                 }
             }
